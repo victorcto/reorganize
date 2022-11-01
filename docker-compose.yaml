@@ -1,0 +1,20 @@
+version: '3.1'
+services:
+  task-service:
+    build: backend/task-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - task-postgresql
+
+  task-postgresql:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=tasks
+    volumes:
+      - ./volume:/var/lib/postgres
+    ports:
+      - "5432:5432"

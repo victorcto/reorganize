@@ -1,4 +1,4 @@
-package br.com.pctfinancas.task;
+package br.com.reorganize.task;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
