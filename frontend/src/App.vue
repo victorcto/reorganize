@@ -1,16 +1,33 @@
 <template>
-  <nav>
+  <!-- <nav>
     <router-link to="/">Home</router-link> |
+    <router-link to="/tasks">Tarefas</router-link> |
     <router-link to="/about">About</router-link>
   </nav>
-  <router-view/>
+  <router-view/> -->
+  <tasks></tasks>
 </template>
 
+<script>
+import tasks from "@/views/Tasks.vue";
+
+export default {
+  name: 'App',
+  components: {
+    tasks
+  }
+}
+</script>
+
 <style>
+
+body{
+  margin: 0;
+  background-color: #222;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
 }
