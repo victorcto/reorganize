@@ -18,9 +18,9 @@
                 <div class="select-container">
                     <label for="prioridade">Prioridade</label>
                     <select name="prioridade" class="add-task-select" v-model="taskPriority">
-                        <option value="1">Alta</option>
-                        <option value="2">Média</option>
-                        <option value="3">Baixa</option>
+                        <option value="HIGH">Alta</option>
+                        <option value="MEDIUM">Média</option>
+                        <option value="LOW">Baixa</option>
 
                     </select>
                 </div>
@@ -31,7 +31,7 @@
         <task-card v-for="task of tasks" 
             :key="task.id" 
             :task="task"
-            @complete="completeTask(id = $event)"
+            @change="changeTaskStatus(id = $event)"
             @remove = "removeTask(id = $event)"
         >
         </task-card>
@@ -40,11 +40,15 @@
 
 <script>
 import taskCard from '@/components/TaskCard.vue'
+import axios from 'axios';
 
 export default{
     name: "Tasks",
     components: {
         taskCard
+    },
+    beforeMount(){
+        this.fetchTasks();
     },
     data(){
         return {
@@ -52,56 +56,61 @@ export default{
             taskTitle: "",
             taskDescription: "",
             taskDeadline: null,
-            taskPriority: 2,
+            taskPriority: "MEDIUM",
         }
     },
-
     methods: {
         isValidTask(task){
             const {title, deadline, priority} = task;
 
             return title && deadline && priority;
         },
+        
+        async fetchTasks(){
+            try{
+                const res = await axios.get('http://localhost:8082/tasks');
 
-        addTask(){
-            const lastId = (this.tasks.length > 0)? this.tasks[this.tasks.length -1].id : 0;
+                this.tasks = res.data.content;
+            }catch(e){
+                console.log(e.message);
+            }
+        },
 
+        async addTask(){
             const task = {
-                id: lastId + 1,
                 title: this.taskTitle,
                 description: this.taskDescription,
                 deadline: this.taskDeadline,
                 priority: this.taskPriority,
-                status: false
+                status: "CREATE"
             };
-            
-            if(this.isValidTask(task)){
-                this.tasks.push(task)
+
+            try{
+                if(this.isValidTask(task)){
+                    await axios.post('http://localhost:8082/tasks', task); 
+                    await this.fetchTasks();
+                }   
+            }catch(e){
+                console.log(e);
+            }finally{
+                this.clearFields();
             }
-                
-            this.clearFields();
         },
 
-        removeTask(id){
-            console.log(id);
-
-            const index = this.tasks.findIndex(task => task.id === id);
-
-            this.tasks.splice(index, 1);
+        async removeTask(id){
+            try{
+                await axios.delete(`http://localhost:8082/tasks/${id}`);
+                await this.fetchTasks();
+            }catch(e){
+                console.log(e.message);
+            }
         }, 
-
-        completeTask(id){
-            console.log(id);
-            const index =this.tasks.findIndex(task => task.id === id);
-
-            this.tasks[index].status = !this.tasks[index].status;
-        },
 
         clearFields(){
             this.taskTitle = "";
             this.taskDescription = "";
             this.taskDeadline = null;
-            this.taskPriority = 2;
+            this.taskPriority = "MEDIUM";
         },
     },
 

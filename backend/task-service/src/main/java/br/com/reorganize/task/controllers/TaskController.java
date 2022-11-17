@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.reorganize.task.dtos.TaskDTO;
+import br.com.reorganize.task.entities.Task;
 import br.com.reorganize.task.services.TaskService;
 
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
@@ -47,7 +50,7 @@ public class TaskController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<TaskDTO>> findAll(@PageableDefault(page = 0, size = 10, sort = "id", 
+	public ResponseEntity<Page<Task>> findAll(@PageableDefault(page = 0, size = 10, sort = "id", 
 			direction = Sort.Direction.ASC) Pageable pageable) {
 		return ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable));
 	}
@@ -66,7 +69,7 @@ public class TaskController {
         if (!service.update(id, taskDTO)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tarefa não encontrada.");
         }
-
+        
         return ResponseEntity.status(HttpStatus.OK).body(taskDTO);
     }
 

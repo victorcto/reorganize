@@ -1,7 +1,6 @@
 package br.com.reorganize.task.services;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.transaction.Transactional;
 
@@ -44,15 +43,8 @@ public class TaskService {
 		return Optional.empty();
 	}
 	
-	public Page<TaskDTO> findAll(Pageable pageable) {
-		Page<Task> entities = repository.findAll(pageable);
-		Page<TaskDTO> dtoPage = entities.map(new Function<Task, TaskDTO>() {
-			@Override
-			public TaskDTO apply(Task t) {
-				return new TaskDTO(t.getTitle(), t.getDescription(), t.getStatus(), t.getDeadline(), t.getPriority());
-			}
-		});
-		return dtoPage;
+	public Page<Task> findAll(Pageable pageable) {
+		return repository.findAll(pageable);
 	}
 	
 	@Transactional

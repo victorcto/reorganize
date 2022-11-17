@@ -35,7 +35,7 @@ public class Task implements Serializable {
 	@Column(nullable = false)
 	private Integer status;
 
-	@Temporal(value = TemporalType.TIMESTAMP)
+	@Temporal(value = TemporalType.DATE)
 	@Column(name = "data_limite", nullable = false)
 	private Date deadline;
 

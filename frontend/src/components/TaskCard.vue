@@ -1,23 +1,21 @@
 <template>
-    <div :class="['task-container', task.status? 'task-completed' : '']">
+    <div :class="['task-container']">
         <span> {{task.title}} </span>
 
         <span class="deadline-container"> {{task.deadline}}</span>
 
         <div class="buttons-container">
-            <button @click="completeTask" class="complete-button" title="Completar tarefa"> <img src="../assets/complete-icon.png" alt="Completar tarefa"> </button>
+            <!-- <button @click="changeStatusTask" class="complete-button" title="Completar tarefa"> <img src="../assets/complete-icon.png" alt="Completar tarefa"> </button> -->
             <!-- <button @click="remoteTask" class="info-button" title="Sobre a tarefa"> <img src="../assets/info-icon.png" alt="Sobre a tarefa"> </button> -->
             <button @click="remoteTask" class="remove-button" title="Remover tarefa"> <img src="../assets/delete-icon.png" alt="Remover tarefa"> </button>
         </div>
     </div>
-
-
 </template>
 
 <script>
 export default {
     name: "TaskCard",
-    emits: ['complete', 'remove'],
+    emits: ['remove'],
     components: {
 
     },
@@ -28,8 +26,8 @@ export default {
         }
     },
     methods: {
-        completeTask(){
-            this.$emit('complete', this.task.id);
+        changeTaskStatus(){
+            this.$emit('change', this.task.id);
         },
 
         remoteTask(){
