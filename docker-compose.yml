@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   vueapp:
     build: ./frontend
@@ -8,10 +9,13 @@ services:
     working_dir: /app
     ports:
       - 8080:8080
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     command: [ "npm", "run", "serve" ]
-
-networks:
-  host:
-    driver: host
+  postgreSQL:
+    image: postgres:12.2
+    container_name: reorganize_postgres
+    environment:
+      - POSTGRES_PASSWORD=pg123pg
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432 #sudo docker exec reorganize_postgres psql -c "CREATE DATABASE tasks" -U postgres
