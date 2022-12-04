@@ -1,10 +1,21 @@
-version: '3.7'
+version: "3.8"
+
 services:
   vueapp:
     build: ./frontend
+    container_name: reorganize_vue3
     volumes:
       - ./frontend:/app
     working_dir: /app
     ports:
       - 8080:8080
-    command: ["npm", "run", "serve"]
+    command: [ "npm", "run", "serve" ]
+  postgreSQL:
+    image: postgres:12.2
+    container_name: reorganize_postgres
+    environment:
+      - POSTGRES_PASSWORD=pg123pg
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432 #sudo docker exec reorganize_postgres psql -c "CREATE DATABASE tasks" -U postgres

@@ -25,7 +25,7 @@ import br.com.reorganize.task.dtos.TaskDTO;
 import br.com.reorganize.task.entities.Task;
 import br.com.reorganize.task.services.TaskService;
 
-@CrossOrigin(maxAge = 3600)
+@CrossOrigin(origins = "*",maxAge = 3600)
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
