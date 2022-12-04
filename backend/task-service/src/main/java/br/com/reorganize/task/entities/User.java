@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +31,10 @@ public class User implements UserDetails{
 	@Column(name = "nome_usuario", nullable = false, unique = true)
 	private String username;
 	
+	@Email
+	@Column(nullable = false, unique = true)
+	private String email;
+	
 	@Column(name = "senha", nullable = false)
 	private String password;
 	
@@ -42,9 +47,10 @@ public class User implements UserDetails{
 		
 	}
 
-	public User(Long id, String username, String password, List<Role> roles) {
+	public User(Long id, String username, String email, String password, List<Role> roles) {
 		this.id = id;
 		this.username = username;
+		this.email = email;
 		this.password = password;
 		this.roles = roles;
 	}
@@ -69,6 +75,14 @@ public class User implements UserDetails{
 	
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	@Override
@@ -107,10 +121,10 @@ public class User implements UserDetails{
 	public boolean isEnabled() {
 		return true;
 	}
-
+	
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, username);
+		return Objects.hash(email, id, username);
 	}
 
 	@Override
@@ -122,11 +136,12 @@ public class User implements UserDetails{
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		return Objects.equals(id, other.id) && Objects.equals(username, other.username);
+		return Objects.equals(email, other.email) && Objects.equals(id, other.id)
+				&& Objects.equals(username, other.username);
 	}
 
 	@Override
 	public String toString() {
-		return "User " + id + "\n\tNome de usuário = " + username + "\n\tSenha = " + password + "\n\tPapeis = " + roles;
+		return "User " + id + "\n\tNome de usuário = " + username + "\n\tEmail = " + email + "\n\tSenha = " + password + "\n\tPapeis = " + roles;
 	}
 }
