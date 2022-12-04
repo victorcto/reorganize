@@ -27,7 +27,7 @@
                     </select>
                 </div>
             </div>
-            <button class="add-task-button" @click="addTask()">Adicionar</button>
+            <button class="add-task-button" @click="addTask()" :disabled="!validInputs()">Adicionar</button>
         </div>
 
         <task-card v-for="task of tasks" :key="task.id" :task="task" @change="changeTaskStatus(id = $event)"
@@ -45,8 +45,9 @@ export default {
     components: {
         taskCard
     },
-    beforeMount() {
-        this.fetchTasks();
+    async mounted() {
+        axios.defaults.baseURL = 'http://172.17.0.1:8082';
+        await this.fetchTasks();
     },
     data() {
         return {
@@ -58,15 +59,13 @@ export default {
         }
     },
     methods: {
-        isValidTask(task) {
-            const { title, deadline, priority, description } = task;
-
-            return title && deadline && priority && description;
+        validInputs() {
+            return this.taskTitle && this.taskDeadline && this.taskPriority && this.taskDescription;
         },
 
         async fetchTasks() {
             try {
-                const res = await axios.get('http://172.17.0.1:8082/tasks');
+                const res = await axios.get('tasks');
 
                 this.tasks = res.data.content;
             } catch (e) {
@@ -84,10 +83,8 @@ export default {
             };
 
             try {
-                if (this.isValidTask(task)) {
-                    await axios.post('http://172.17.0.1:8082/tasks', task);
-                    await this.fetchTasks();
-                }
+                await axios.post('tasks', task);
+                await this.fetchTasks();
             } catch (e) {
                 console.log(e.message);
             } finally {
@@ -97,7 +94,7 @@ export default {
 
         async removeTask(id) {
             try {
-                await axios.delete(`http://172.17.0.1:8082/tasks/${id}`);
+                await axios.delete(`tasks/${id}`);
                 await this.fetchTasks();
             } catch (e) {
                 console.log(e.message);
@@ -178,22 +175,12 @@ label {
     font-size: 16px;
 }
 
-.add-task-input:focus {
-    outline: none;
-    border: 2px solid chartreuse
-}
-
 .add-task-textarea {
     resize: none;
     background-color: #444;
     color: #eee;
     font-size: 16px;
     border-radius: 5px;
-}
-
-.add-task-textarea:focus {
-    outline: none;
-    border: 2px solid chartreuse;
 }
 
 .date-container {
@@ -210,11 +197,6 @@ label {
     background-color: #444;
     color: #eee;
     border-radius: 5px;
-}
-
-.add-task-datepicker:focus {
-    outline: none;
-    border: 2px solid chartreuse;
 }
 
 .select-container {
@@ -234,11 +216,6 @@ label {
     border-radius: 5px;
 }
 
-.add-task-select:focus {
-    outline: none;
-    border: 2px solid chartreuse;
-}
-
 .add-task-button {
     align-self: flex-end;
     margin-left: 10px;
@@ -251,5 +228,25 @@ label {
     font-weight: bold;
     cursor: pointer;
     border: none;
+}
+
+.add-task-input:focus {
+    outline: none;
+    border: 2px solid chartreuse
+}
+
+.add-task-textarea:focus {
+    outline: none;
+    border: 2px solid chartreuse;
+}
+
+.add-task-datepicker:focus {
+    outline: none;
+    border: 2px solid chartreuse;
+}
+
+.add-task-select:focus {
+    outline: none;
+    border: 2px solid chartreuse;
 }
 </style>

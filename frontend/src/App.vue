@@ -5,16 +5,14 @@
     <router-link to="/about">About</router-link>
   </nav>
   <router-view/> -->
-  <tasks></tasks>
+  <RouterView></RouterView>
+  <!-- <tasks></tasks> -->
 </template>
 
 <script>
-import tasks from "@/views/Tasks.vue";
-
 export default {
   name: "App",
   components: {
-    tasks,
   },
 };
 </script>
