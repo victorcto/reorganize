@@ -12,19 +12,19 @@
 import tasks from "@/views/Tasks.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    tasks
-  }
-}
+    tasks,
+  },
+};
 </script>
 
 <style>
-
-body{
+body {
   margin: 0;
   background-color: #222;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 #app {

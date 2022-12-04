@@ -1,12 +1,12 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true, 
-  configureWebpack: {
-    watch: true
-  },
+  // configureWebpack: {
+  //   watch: true
+  // },
   devServer: {
-    host: 'localhost',
+    // host: 'localhost',
     port: 8080,
-    proxy: 'http://localhost:8082/'
+    proxy: 'http://host.docker.internal:8082'
   }
 })

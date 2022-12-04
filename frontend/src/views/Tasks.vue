@@ -3,16 +3,18 @@
         <h2 class="title">Menu de Tarefas</h2>
         <div class="add-task-container">
             <label for="título">Título</label>
-            <input type="text" class="add-task-input" v-model="taskTitle" placeholder="Título da tarefa" >
+            <input type="text" class="add-task-input" v-model="taskTitle" placeholder="Título da tarefa">
 
             <label for="descrição">Descrição</label>
-            <textarea name="descricao" cols="8" rows="5" class="add-task-textarea" placeholder="Descrição para a tarefa" v-model="taskDescription">
+            <textarea name="descricao" cols="8" rows="5" class="add-task-textarea" placeholder="Descrição para a tarefa"
+                v-model="taskDescription">
             </textarea>
-            
+
             <div class="date-priority-container">
                 <div class="date-container">
                     <label for="data limite">Data limite</label>
-                    <input type="date" name="data_limite" class="add-task-datepicker" v-model="taskDeadline" :min="minDate">
+                    <input type="date" name="data_limite" class="add-task-datepicker" v-model="taskDeadline"
+                        :min="minDate">
                 </div>
 
                 <div class="select-container">
@@ -28,12 +30,8 @@
             <button class="add-task-button" @click="addTask()">Adicionar</button>
         </div>
 
-        <task-card v-for="task of tasks" 
-            :key="task.id" 
-            :task="task"
-            @change="changeTaskStatus(id = $event)"
-            @remove = "removeTask(id = $event)"
-        >
+        <task-card v-for="task of tasks" :key="task.id" :task="task" @change="changeTaskStatus(id = $event)"
+            @remove="removeTask(id = $event)">
         </task-card>
     </div>
 </template>
@@ -42,15 +40,15 @@
 import taskCard from '@/components/TaskCard.vue'
 import axios from 'axios';
 
-export default{
+export default {
     name: "Tasks",
     components: {
         taskCard
     },
-    beforeMount(){
+    beforeMount() {
         this.fetchTasks();
     },
-    data(){
+    data() {
         return {
             tasks: [],
             taskTitle: "",
@@ -60,23 +58,23 @@ export default{
         }
     },
     methods: {
-        isValidTask(task){
-            const {title, deadline, priority} = task;
+        isValidTask(task) {
+            const { title, deadline, priority, description } = task;
 
-            return title && deadline && priority;
+            return title && deadline && priority && description;
         },
-        
-        async fetchTasks(){
-            try{
-                const res = await axios.get('http://localhost:8082/tasks');
+
+        async fetchTasks() {
+            try {
+                const res = await axios.get('http://172.17.0.1:8082/tasks');
 
                 this.tasks = res.data.content;
-            }catch(e){
-                console.log(e.message);
+            } catch (e) {
+                console.log(e);
             }
         },
 
-        async addTask(){
+        async addTask() {
             const task = {
                 title: this.taskTitle,
                 description: this.taskDescription,
@@ -85,28 +83,28 @@ export default{
                 status: "CREATE"
             };
 
-            try{
-                if(this.isValidTask(task)){
-                    await axios.post('http://localhost:8082/tasks', task); 
+            try {
+                if (this.isValidTask(task)) {
+                    await axios.post('http://172.17.0.1:8082/tasks', task);
                     await this.fetchTasks();
-                }   
-            }catch(e){
-                console.log(e);
-            }finally{
+                }
+            } catch (e) {
+                console.log(e.message);
+            } finally {
                 this.clearFields();
             }
         },
 
-        async removeTask(id){
-            try{
-                await axios.delete(`http://localhost:8082/tasks/${id}`);
+        async removeTask(id) {
+            try {
+                await axios.delete(`http://172.17.0.1:8082/tasks/${id}`);
                 await this.fetchTasks();
-            }catch(e){
+            } catch (e) {
                 console.log(e.message);
             }
-        }, 
+        },
 
-        clearFields(){
+        clearFields() {
             this.taskTitle = "";
             this.taskDescription = "";
             this.taskDeadline = null;
@@ -115,27 +113,28 @@ export default{
     },
 
     computed: {
-        minDate(){
+        minDate() {
             const now = new Date();
 
-            return `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
+            return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
         }
     }
 }
 </script>
 
 <style scoped>
-h2.title{
+h2.title {
     color: #eee;
 }
 
-label{
+label {
     color: #eee;
     font-size: 12pt;
     font-weight: bold;
     align-self: flex-start;
 }
-.container{
+
+.container {
     max-width: 500px;
     flex-basis: 400px;
     margin: 75px auto;
@@ -146,7 +145,7 @@ label{
     border-radius: 10px;
 }
 
-.add-task-container{
+.add-task-container {
     box-sizing: border-box;
     padding: 15px;
     /* border: 2px solid chartreuse;
@@ -157,7 +156,8 @@ label{
     gap: 10px;
     flex-flow: column wrap;
 }
-.date-priority-container{
+
+.date-priority-container {
     box-sizing: border-box;
     width: 100%;
     display: flex;
@@ -167,7 +167,7 @@ label{
 }
 
 
-.add-task-input{
+.add-task-input {
     height: 30px;
     padding: 0 10px;
     border-radius: 5px;
@@ -178,12 +178,12 @@ label{
     font-size: 16px;
 }
 
-.add-task-input:focus{
+.add-task-input:focus {
     outline: none;
     border: 2px solid chartreuse
 }
 
-.add-task-textarea{
+.add-task-textarea {
     resize: none;
     background-color: #444;
     color: #eee;
@@ -191,18 +191,19 @@ label{
     border-radius: 5px;
 }
 
-.add-task-textarea:focus{
+.add-task-textarea:focus {
     outline: none;
     border: 2px solid chartreuse;
 }
 
-.date-container{
+.date-container {
     display: flex;
     flex-flow: column wrap;
     width: 45%;
     gap: 5px;
 }
-.add-task-datepicker{
+
+.add-task-datepicker {
     /* flex-grow: 2; */
     height: 30px;
     width: 100%;
@@ -211,18 +212,19 @@ label{
     border-radius: 5px;
 }
 
-.add-task-datepicker:focus{
+.add-task-datepicker:focus {
     outline: none;
     border: 2px solid chartreuse;
 }
-.select-container{
+
+.select-container {
     display: flex;
     flex-flow: column wrap;
     width: 45%;
     gap: 5px;
 }
 
-.add-task-select{
+.add-task-select {
     width: 100%;
     height: 35px;
 
@@ -232,12 +234,12 @@ label{
     border-radius: 5px;
 }
 
-.add-task-select:focus{
+.add-task-select:focus {
     outline: none;
     border: 2px solid chartreuse;
 }
 
-.add-task-button{
+.add-task-button {
     align-self: flex-end;
     margin-left: 10px;
     background-color: chartreuse;
@@ -248,6 +250,6 @@ label{
     color: #444;
     font-weight: bold;
     cursor: pointer;
-    border: none; 
+    border: none;
 }
 </style>
