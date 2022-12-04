@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,18 +43,23 @@ public class Task implements Serializable {
 
 	@Column(name = "prioridade", nullable = false)
 	private Integer priority;
+	
+	@ManyToOne
+	@JoinColumn(name = "usuario", nullable = false)
+	private User user;
 
 	public Task() {
 
 	}
 
-	public Task(Long id, String title, String description, Status status, Date deadline, Priority priority) {
+	public Task(Long id, String title, String description, Status status, Date deadline, Priority priority, User user) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		setStatus(status);
 		this.deadline = deadline;
 		setPriority(priority);
+		this.user = user;
 	}
 
 	public Long getId() {
@@ -106,6 +113,14 @@ public class Task implements Serializable {
 			this.priority = priority.getId();
 		}
 	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 	@Override
 	public int hashCode() {
@@ -128,7 +143,7 @@ public class Task implements Serializable {
 	public String toString() {
 		return "Task " + id + ":\n\tTítulo = " + title + "\n\tDescrição = " + description + "\n\tStatus = "
 				+ Status.valueOf(status).getDescription() + "\n\tData Limite = " + deadline + "\n\tPrioridade = "
-				+ Priority.valueOf(priority).getDescription();
+				+ Priority.valueOf(priority).getDescription() + "\n\tUsuário = " + user;
 	}
 
 }

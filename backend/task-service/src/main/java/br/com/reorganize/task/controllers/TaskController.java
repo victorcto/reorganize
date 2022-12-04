@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.reorganize.task.dtos.TaskDTO;
+import br.com.reorganize.task.dtos.UserDTO;
 import br.com.reorganize.task.entities.Task;
 import br.com.reorganize.task.services.TaskService;
+import br.com.reorganize.task.services.UserService;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
@@ -31,16 +34,25 @@ import br.com.reorganize.task.services.TaskService;
 public class TaskController {
 
 	@Autowired
-	private TaskService service;
-
+	private TaskService taskService;
+	
+	@Autowired
+	private UserService userService;
+	
 	@PostMapping
-	public ResponseEntity<TaskDTO> save(@RequestBody @Valid TaskDTO dto) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(dto));
+	public ResponseEntity<Object> save(@RequestBody @Valid TaskDTO dto) {
+		var userDTO = new UserDTO();
+		BeanUtils.copyProperties(dto.getUser(), userDTO);
+		if (!userService.haveRegisteredUser(userDTO)) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Usuário não cadastrado.");
+		}
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(taskService.save(dto));
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> findById(@PathVariable(value = "id") Long id) {
-		Optional<TaskDTO> taskOptional = service.findById(id);
+		Optional<TaskDTO> taskOptional = taskService.findById(id);
 
 		if (!taskOptional.isPresent()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tarefa não encontrada.");
@@ -52,12 +64,12 @@ public class TaskController {
 	@GetMapping
 	public ResponseEntity<Page<Task>> findAll(@PageableDefault(page = 0, size = 10, sort = "id", 
 			direction = Sort.Direction.ASC) Pageable pageable) {
-		return ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable));
+		return ResponseEntity.status(HttpStatus.OK).body(taskService.findAll(pageable));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> delete(@PathVariable(value = "id") Long id) {
-		if (!service.delete(id)) {
+		if (!taskService.delete(id)) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tarefa não encontrada.");
 		}
 	
@@ -66,7 +78,7 @@ public class TaskController {
 	
 	@PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @RequestBody @Valid TaskDTO taskDTO){
-        if (!service.update(id, taskDTO)) {
+        if (!taskService.update(id, taskDTO)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tarefa não encontrada.");
         }
         

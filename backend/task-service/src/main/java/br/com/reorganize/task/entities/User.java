@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 
@@ -43,16 +45,20 @@ public class User implements UserDetails{
 	inverseJoinColumns = @JoinColumn(name = "id_papel"))
 	private List<Role> roles;
 	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	private List<Task> tasks;
+	
 	public User() {
 		
 	}
-
-	public User(Long id, String username, String email, String password, List<Role> roles) {
+	
+	public User(Long id, String username, @Email String email, String password, List<Role> roles, List<Task> tasks) {
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.roles = roles;
+		this.tasks = tasks;
 	}
 
 	@Override
@@ -102,6 +108,14 @@ public class User implements UserDetails{
 		this.roles = roles;
 	}
 
+	public List<Task> getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -142,6 +156,6 @@ public class User implements UserDetails{
 
 	@Override
 	public String toString() {
-		return "User " + id + "\n\tNome de usuário = " + username + "\n\tEmail = " + email + "\n\tSenha = " + password + "\n\tPapeis = " + roles;
+		return "User " + id + "\n\tNome de usuário = " + username + "\n\tEmail = " + email + "\n\tSenha = " + password + "\n\tPapeis = " + roles + "\n\tTarefas = " + tasks;
 	}
 }
