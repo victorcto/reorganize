@@ -1,6 +1,7 @@
 package br.com.reorganize.task.entities;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -8,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +24,7 @@ public class User implements UserDetails{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id_usuario")
 	private Long id;
 	
 	@Column(name = "nome_usuario", nullable = false, unique = true)
@@ -28,19 +33,25 @@ public class User implements UserDetails{
 	@Column(name = "senha", nullable = false)
 	private String password;
 	
+	@ManyToMany
+	@JoinTable(name = "papeis_usuarios", joinColumns = @JoinColumn(name = "id_usuario"), 
+	inverseJoinColumns = @JoinColumn(name = "id_papel"))
+	private List<Role> roles;
+	
 	public User() {
 		
 	}
-	
-	public User(Long id, String username, String password) {
+
+	public User(Long id, String username, String password, List<Role> roles) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
+		this.roles = roles;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return roles;
 	}
 	
 	public Long getId() {
@@ -69,6 +80,14 @@ public class User implements UserDetails{
 		this.password = password;
 	}
 	
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -108,7 +127,6 @@ public class User implements UserDetails{
 
 	@Override
 	public String toString() {
-		return "User " + id + "\n\tNome de usuário = " + username + "\n\tSenha = " + password;
+		return "User " + id + "\n\tNome de usuário = " + username + "\n\tSenha = " + password + "\n\tPapeis = " + roles;
 	}
-	
 }
