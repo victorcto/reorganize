@@ -1,17 +1,17 @@
 <template>
     <div id="container">
-      <h2 class="title">Login</h2>
-      <div class="login-container">
+      <h2 class="title">Reorganize</h2>
+      <form class="login-container" @submit.prevent="login()">
         <label for="username">Nome de usuário</label>
-        <input type="text" placeholder="Informe o nome de usuário..." id="username" v-model="username" class="username-input">
+        <input type="text" placeholder="Informe o nome de usuário..." id="username" v-model="username" class="username-input" required>
 
         <label for="password">Senha</label>
-        <input type="password" placeholder="Digite a senha" id="password" v-model="password" class="password-input">
+        <input type="password" placeholder="Digite a senha" id="password" v-model="password" class="password-input" required>
 
-        <button class="submit-button" @click="login()" :disabled="(!username || !password)">Entrar</button>
+        <input type="submit" value="Entrar" class="submit-button">
 
         <span @click="register()">Não tenho uma conta!</span>
-      </div>
+      </form>
     </div>
 </template>
 <script>
@@ -62,14 +62,14 @@ span:hover{
 }
 
 span{
-  padding-top: 10px;
+  padding-top: 20px;
   color: #eee;
   font-size: 9pt;
   cursor: pointer;
   text-decoration: none;
 }
 
-div.login-container{
+.login-container{
   box-sizing: border-box;
   padding: 15px;
   margin: 15px 0;
@@ -109,7 +109,7 @@ input.password-input:focus {
   border: 2px solid chartreuse
 }
 
-button.submit-button{
+.submit-button{
   align-self: center;
   margin-left: 10px;
   background-color: chartreuse;

@@ -1,12 +1,14 @@
 <template>
     <div class="container">
         <h2 class="title">Menu de Tarefas</h2>
-        <div class="add-task-container">
-            <label for="título">Título</label>
-            <input type="text" class="add-task-input" v-model="taskTitle" placeholder="Título da tarefa">
+        <form class="add-task-container" @submit.prevent="addTask()">
+            <label for="titulo">Título</label>
+            <input type="text" class="add-task-input" v-model="taskTitle" placeholder="Título da tarefa" id="titulo" required>
 
-            <label for="descrição">Descrição</label>
-            <textarea name="descricao" cols="8" rows="5" class="add-task-textarea" placeholder="Descrição para a tarefa"
+            <label for="descricao">Descrição</label>
+            <textarea name="descricao" cols="8" rows="5" class="add-task-textarea" placeholder="Descrição para a tarefa" 
+                id="descricao"
+                required
                 v-model="taskDescription">
             </textarea>
 
@@ -14,7 +16,8 @@
                 <div class="date-container">
                     <label for="data limite">Data limite</label>
                     <input type="date" name="data_limite" class="add-task-datepicker" v-model="taskDeadline"
-                        :min="minDate">
+                        :min="minDate"
+                        required>
                 </div>
 
                 <div class="select-container">
@@ -27,8 +30,8 @@
                     </select>
                 </div>
             </div>
-            <button class="add-task-button" @click="addTask()" :disabled="!validInputs()">Adicionar</button>
-        </div>
+            <input type="submit" value="Adicionar" class="add-task-button">
+        </form>
 
         <task-card v-for="task of tasks" :key="task.id" :task="task" @change="changeTaskStatus(id = $event)"
             @remove="removeTask(id = $event)">
