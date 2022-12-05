@@ -10,7 +10,7 @@
 
         <button class="submit-button" @click="login()" :disabled="(!username || !password)">Entrar</button>
 
-        <span>Não tenho uma conta!</span>
+        <span @click="register()">Não tenho uma conta!</span>
       </div>
     </div>
 </template>
@@ -26,6 +26,10 @@ export default{
   methods: {
     login(){
       this.$router.push({name: 'tasks'});
+    },
+
+    register(){
+      this.$router.push({name: 'register'});
     }
   }
 }
@@ -95,12 +99,12 @@ input.password-input{
   font-size: 16px;
 }
 
-input.username-input{
+input.username-input:focus{
   outline: none;
   border: 2px solid chartreuse
 }
 
-input.password-input {
+input.password-input:focus {
   outline: none;
   border: 2px solid chartreuse
 }

@@ -14,6 +14,13 @@ const routes = [
     }
   },
   {
+    path: '/register',
+    name: 'register',
+    component: function (){
+      return import('../views/Register.vue');
+    }
+  },
+  {
     path: '/about',
     name: 'about',
     // route level code-splitting
