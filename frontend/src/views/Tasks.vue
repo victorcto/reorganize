@@ -14,15 +14,13 @@
 
             <div class="date-priority-container">
                 <div class="date-container">
-                    <label for="data limite">Data limite</label>
-                    <input type="date" name="data_limite" class="add-task-datepicker" v-model="taskDeadline"
-                        :min="minDate"
-                        required>
+                    <label for="data-limite">Data limite</label>
+                    <input type="date" id="data-limite" class="add-task-datepicker" v-model="taskDeadline" :min="minDate" required>
                 </div>
 
                 <div class="select-container">
                     <label for="prioridade">Prioridade</label>
-                    <select name="prioridade" class="add-task-select" v-model="taskPriority">
+                    <select id="prioridade" class="add-task-select" v-model="taskPriority">
                         <option value="HIGH">Alta</option>
                         <option value="MEDIUM">Média</option>
                         <option value="LOW">Baixa</option>
@@ -41,7 +39,7 @@
 
 <script>
 import taskCard from '@/components/TaskCard.vue'
-import axios from 'axios';
+import axiosReorganize from '@/settings/axiosInstances';
 
 export default {
     name: "Tasks",
@@ -49,7 +47,6 @@ export default {
         taskCard
     },
     async mounted() {
-        axios.defaults.baseURL = 'http://172.17.0.1:8082';
         await this.fetchTasks();
     },
     data() {
@@ -68,11 +65,11 @@ export default {
 
         async fetchTasks() {
             try {
-                const res = await axios.get('tasks');
+                const res = await axiosReorganize.get('tasks');
 
                 this.tasks = res.data.content;
             } catch (e) {
-                console.log(e);
+                console.log(e.message);
             }
         },
 
@@ -86,7 +83,7 @@ export default {
             };
 
             try {
-                await axios.post('tasks', task);
+                await axiosReorganize.post('tasks', task);
                 await this.fetchTasks();
             } catch (e) {
                 console.log(e.message);
@@ -97,7 +94,7 @@ export default {
 
         async removeTask(id) {
             try {
-                await axios.delete(`tasks/${id}`);
+                await axiosReorganize.delete(`tasks/${id}`);
                 await this.fetchTasks();
             } catch (e) {
                 console.log(e.message);
@@ -115,8 +112,15 @@ export default {
     computed: {
         minDate() {
             const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
 
-            return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+            const textDate = (d) => {
+                return d < 10 ? '0' + d: d;
+            } 
+
+            return `${textDate(year)}-${textDate(month)}-${textDate(day)}`
         }
     }
 }

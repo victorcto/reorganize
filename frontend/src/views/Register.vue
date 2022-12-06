@@ -6,6 +6,9 @@
       <label for="username">Nome de usuário</label>
       <input type="text" id="username" placeholder="Nome de usuário..." class="username-input" v-model="username" required>
 
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Informe o email" class="email-input" v-model="email" required>
+
       <label for="password">Senha</label>
       <input type="password" id="password" placeholder="Senha..." class="password-input" v-model="password" required>
 
@@ -24,6 +27,7 @@ export default {
   data(){
     return {
       username: '',
+      email: '',
       password: '',
       passwordConfirm: '',
     }
@@ -110,6 +114,16 @@ label{
   font-size: 16px;
 }
 
+.email-input{
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #444;
+  color: #eee;
+  font-size: 16px;
+}
+
 .register-button{
   align-self: center;
   margin-left: 10px;
@@ -131,6 +145,11 @@ label{
 }
 
 .password-input:focus{
+  outline: none;
+  border: 2px solid chartreuse;
+}
+
+.email-input:focus{
   outline: none;
   border: 2px solid chartreuse;
 }
