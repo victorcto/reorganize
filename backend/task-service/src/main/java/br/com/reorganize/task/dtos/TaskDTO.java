@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import br.com.reorganize.task.entities.User;
 import br.com.reorganize.task.entities.enums.Priority;
 import br.com.reorganize.task.entities.enums.Status;
 
@@ -26,13 +25,13 @@ public class TaskDTO {
 	private Integer priority;
 	
 	@NotNull
-	private User user;
+	private Long user;
 	
 	public TaskDTO() {
 		
 	}
 
-	public TaskDTO(String title, String description, Status status, Date deadline, Priority priority, User user) {
+	public TaskDTO(String title, String description, Status status, Date deadline, Priority priority, Long user) {
 		this.title = title;
 		this.description = description;
 		setStatus(status);
@@ -88,11 +87,11 @@ public class TaskDTO {
 		}
 	}
 
-	public User getUser() {
+	public Long getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Long user) {
 		this.user = user;
 	}
 }

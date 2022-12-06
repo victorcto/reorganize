@@ -7,12 +7,10 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -22,7 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "usuario")
-public class User implements UserDetails{
+public class User implements UserDetails {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -40,30 +38,19 @@ public class User implements UserDetails{
 	@Column(name = "senha", nullable = false)
 	private String password;
 	
-	@ManyToMany
-	@JoinTable(name = "papeis_usuarios", joinColumns = @JoinColumn(name = "id_usuario"), 
-	inverseJoinColumns = @JoinColumn(name = "id_papel"))
-	private List<Role> roles;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user")
 	private List<Task> tasks;
 	
 	public User() {
 		
 	}
 	
-	public User(Long id, String username, @Email String email, String password, List<Role> roles, List<Task> tasks) {
+	public User(Long id, String username, @Email String email, String password, List<Task> tasks) {
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.password = password;
-		this.roles = roles;
 		this.tasks = tasks;
-	}
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return roles;
 	}
 	
 	public Long getId() {
@@ -99,14 +86,6 @@ public class User implements UserDetails{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
 
 	public List<Task> getTasks() {
 		return tasks;
@@ -114,6 +93,11 @@ public class User implements UserDetails{
 
 	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;
+	}
+	
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
 	}
 
 	@Override
@@ -156,6 +140,6 @@ public class User implements UserDetails{
 
 	@Override
 	public String toString() {
-		return "User " + id + "\n\tNome de usuário = " + username + "\n\tEmail = " + email + "\n\tSenha = " + password + "\n\tPapeis = " + roles + "\n\tTarefas = " + tasks;
+		return "User " + id + "\n\tNome de usuário = " + username + "\n\tEmail = " + email + "\n\tSenha = " + password + "\n\tTarefas = " + tasks;
 	}
 }

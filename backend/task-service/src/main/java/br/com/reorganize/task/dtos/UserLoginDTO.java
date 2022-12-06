@@ -1,28 +1,21 @@
 package br.com.reorganize.task.dtos;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-public class UserDTO {
-	
+public class UserLoginDTO {
+
 	@NotBlank
 	private String username;
-	
-	@Email
-	@NotBlank
-	private String email;
 	
 	@NotBlank
 	private String password;
 	
-	
-	public UserDTO() {
+	public UserLoginDTO() {
 		
 	}
 
-	public UserDTO(@NotBlank String username, @Email @NotBlank String email, @NotBlank String password) {
+	public UserLoginDTO(@NotBlank String username, @NotBlank String password) {
 		this.username = username;
-		this.email = email;
 		this.password = password;
 	}
 
@@ -34,14 +27,6 @@ public class UserDTO {
 		this.username = username;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getPassword() {
 		return password;
 	}
@@ -49,5 +34,4 @@ public class UserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
 }

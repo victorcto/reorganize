@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.reorganize.task.dtos.UserDTO;
+import br.com.reorganize.task.dtos.UserLoginDTO;
+import br.com.reorganize.task.dtos.UserLoginIdDTO;
 import br.com.reorganize.task.entities.User;
 import br.com.reorganize.task.repositories.UserRepository;
 
@@ -26,6 +28,24 @@ public class UserService {
 		String encrypt = new BCryptPasswordEncoder().encode(user.getPassword());
 		user.setPassword(encrypt);
 		return repository.save(user);
+	}
+	
+	public Optional<UserLoginIdDTO> login(UserLoginDTO user) {
+		Optional<User> userOptional = repository.findByUsername(user.getUsername());
+		
+		if (!userOptional.isPresent()) {
+			return null;
+		}
+		
+		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+		
+		if (!bcrypt.matches(user.getPassword(), userOptional.get().getPassword())) {
+			return Optional.empty();
+		}
+		
+		UserLoginIdDTO loginWithID = new UserLoginIdDTO(userOptional.get().getId(), user.getUsername(), user.getPassword());
+		
+		return Optional.of(loginWithID);
 	}
 	
 	public boolean haveRegisteredUser(UserDTO user) {
@@ -60,16 +80,11 @@ public class UserService {
 	}
 	
 	@Transactional
-	public boolean update(Long id, User userUpdate) {
-		Optional<User> user = findById(id);
-		
-		if (!user.isPresent()) {
-			return false;
-		}
-		
+	public User update(Long id, User user, User userUpdate) {
 		BeanUtils.copyProperties(userUpdate, user);
-		repository.save(user.get());
-		return true;
+		String encrypt = new BCryptPasswordEncoder().encode(user.getPassword());
+		user.setPassword(encrypt);
+		return repository.save(user);
 	}
 	
 }

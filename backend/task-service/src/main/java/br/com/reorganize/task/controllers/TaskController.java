@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.reorganize.task.dtos.TaskDTO;
-import br.com.reorganize.task.dtos.UserDTO;
 import br.com.reorganize.task.entities.Task;
 import br.com.reorganize.task.services.TaskService;
 import br.com.reorganize.task.services.UserService;
@@ -41,9 +39,7 @@ public class TaskController {
 	
 	@PostMapping
 	public ResponseEntity<Object> save(@RequestBody @Valid TaskDTO dto) {
-		var userDTO = new UserDTO();
-		BeanUtils.copyProperties(dto.getUser(), userDTO);
-		if (!userService.haveRegisteredUser(userDTO)) {
+		if (!userService.findById(dto.getUser()).isPresent()) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Usuário não cadastrado.");
 		}
 		

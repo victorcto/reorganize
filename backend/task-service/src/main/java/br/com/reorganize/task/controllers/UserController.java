@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.reorganize.task.dtos.UserDTO;
+import br.com.reorganize.task.dtos.UserLoginDTO;
+import br.com.reorganize.task.dtos.UserLoginIdDTO;
 import br.com.reorganize.task.entities.User;
 import br.com.reorganize.task.services.UserService;
 import br.com.reorganize.task.utils.Util;
@@ -44,6 +46,16 @@ public class UserController {
 		var user = new User();
 		BeanUtils.copyProperties(userDTO, user);
 		return ResponseEntity.status(HttpStatus.OK).body(service.save(user));
+	}
+	
+	@GetMapping("/login")
+	public ResponseEntity<Object> login(@RequestBody @Valid UserLoginDTO login) {
+		Optional<UserLoginIdDTO> user = service.login(login);
+		if (!user.isPresent()) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Nome de usuário e/ou senha inválido(s).");
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(user.get());
 	}
 	
 	@GetMapping("/{id}")
@@ -75,15 +87,14 @@ public class UserController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> update(@PathVariable(value = "id") Long id, @RequestBody UserDTO userDTO) {
 		Optional<User> userOptional = service.findById(id);
-		Optional<UserDTO> dto = Optional.of(userDTO);
 		
-		BeanUtils.copyProperties(userDTO, userOptional.get(), Util.getNullPropertyNames(dto));
-		
-		if (!service.update(id, userOptional.get())) {
+		if (!userOptional.isPresent()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado para atualização"); 
 		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(userOptional.get());
+		Optional<UserDTO> dto = Optional.of(userDTO);
+		BeanUtils.copyProperties(userDTO, userOptional.get(), Util.getNullPropertyNames(dto));
+		return ResponseEntity.status(HttpStatus.OK).body(service.update(id, userOptional.get(), userOptional.get()));
 	}
 	
 }
