@@ -1,25 +1,26 @@
 <template>
     <div class="container">
         <h2 class="title">Menu de Tarefas</h2>
-        <div class="add-task-container">
-            <label for="título">Título</label>
-            <input type="text" class="add-task-input" v-model="taskTitle" placeholder="Título da tarefa">
+        <form class="add-task-container" @submit.prevent="addTask()">
+            <label for="titulo">Título</label>
+            <input type="text" class="add-task-input" v-model="taskTitle" placeholder="Título da tarefa" id="titulo" required>
 
-            <label for="descrição">Descrição</label>
-            <textarea name="descricao" cols="8" rows="5" class="add-task-textarea" placeholder="Descrição para a tarefa"
+            <label for="descricao">Descrição</label>
+            <textarea name="descricao" cols="8" rows="5" class="add-task-textarea" placeholder="Descrição para a tarefa" 
+                id="descricao"
+                required
                 v-model="taskDescription">
             </textarea>
 
             <div class="date-priority-container">
                 <div class="date-container">
-                    <label for="data limite">Data limite</label>
-                    <input type="date" name="data_limite" class="add-task-datepicker" v-model="taskDeadline"
-                        :min="minDate">
+                    <label for="data-limite">Data limite</label>
+                    <input type="date" id="data-limite" class="add-task-datepicker" v-model="taskDeadline" :min="minDate" required>
                 </div>
 
                 <div class="select-container">
                     <label for="prioridade">Prioridade</label>
-                    <select name="prioridade" class="add-task-select" v-model="taskPriority">
+                    <select id="prioridade" class="add-task-select" v-model="taskPriority">
                         <option value="HIGH">Alta</option>
                         <option value="MEDIUM">Média</option>
                         <option value="LOW">Baixa</option>
@@ -27,8 +28,8 @@
                     </select>
                 </div>
             </div>
-            <button class="add-task-button" @click="addTask()">Adicionar</button>
-        </div>
+            <input type="submit" value="Adicionar" class="add-task-button">
+        </form>
 
         <task-card v-for="task of tasks" :key="task.id" :task="task" @change="changeTaskStatus(id = $event)"
             @remove="removeTask(id = $event)">
@@ -38,15 +39,15 @@
 
 <script>
 import taskCard from '@/components/TaskCard.vue'
-import axios from 'axios';
+import axiosReorganize from '@/settings/axiosInstances';
 
 export default {
     name: "Tasks",
     components: {
         taskCard
     },
-    beforeMount() {
-        this.fetchTasks();
+    async mounted() {
+        await this.fetchTasks();
     },
     data() {
         return {
@@ -58,19 +59,17 @@ export default {
         }
     },
     methods: {
-        isValidTask(task) {
-            const { title, deadline, priority, description } = task;
-
-            return title && deadline && priority && description;
+        validInputs() {
+            return this.taskTitle && this.taskDeadline && this.taskPriority && this.taskDescription;
         },
 
         async fetchTasks() {
             try {
-                const res = await axios.get('http://172.17.0.1:8082/tasks');
+                const res = await axiosReorganize.get('tasks');
 
                 this.tasks = res.data.content;
             } catch (e) {
-                console.log(e);
+                console.log(e.message);
             }
         },
 
@@ -84,10 +83,8 @@ export default {
             };
 
             try {
-                if (this.isValidTask(task)) {
-                    await axios.post('http://172.17.0.1:8082/tasks', task);
-                    await this.fetchTasks();
-                }
+                await axiosReorganize.post('tasks', task);
+                await this.fetchTasks();
             } catch (e) {
                 console.log(e.message);
             } finally {
@@ -97,7 +94,7 @@ export default {
 
         async removeTask(id) {
             try {
-                await axios.delete(`http://172.17.0.1:8082/tasks/${id}`);
+                await axiosReorganize.delete(`tasks/${id}`);
                 await this.fetchTasks();
             } catch (e) {
                 console.log(e.message);
@@ -115,8 +112,15 @@ export default {
     computed: {
         minDate() {
             const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
 
-            return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+            const textDate = (d) => {
+                return d < 10 ? '0' + d: d;
+            } 
+
+            return `${textDate(year)}-${textDate(month)}-${textDate(day)}`
         }
     }
 }
@@ -178,22 +182,12 @@ label {
     font-size: 16px;
 }
 
-.add-task-input:focus {
-    outline: none;
-    border: 2px solid chartreuse
-}
-
 .add-task-textarea {
     resize: none;
     background-color: #444;
     color: #eee;
     font-size: 16px;
     border-radius: 5px;
-}
-
-.add-task-textarea:focus {
-    outline: none;
-    border: 2px solid chartreuse;
 }
 
 .date-container {
@@ -210,11 +204,6 @@ label {
     background-color: #444;
     color: #eee;
     border-radius: 5px;
-}
-
-.add-task-datepicker:focus {
-    outline: none;
-    border: 2px solid chartreuse;
 }
 
 .select-container {
@@ -234,11 +223,6 @@ label {
     border-radius: 5px;
 }
 
-.add-task-select:focus {
-    outline: none;
-    border: 2px solid chartreuse;
-}
-
 .add-task-button {
     align-self: flex-end;
     margin-left: 10px;
@@ -251,5 +235,25 @@ label {
     font-weight: bold;
     cursor: pointer;
     border: none;
+}
+
+.add-task-input:focus {
+    outline: none;
+    border: 2px solid chartreuse
+}
+
+.add-task-textarea:focus {
+    outline: none;
+    border: 2px solid chartreuse;
+}
+
+.add-task-datepicker:focus {
+    outline: none;
+    border: 2px solid chartreuse;
+}
+
+.add-task-select:focus {
+    outline: none;
+    border: 2px solid chartreuse;
 }
 </style>

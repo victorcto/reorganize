@@ -1,11 +1,24 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    redirect: '/login'
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: function (){
+      return import('../views/Login.vue');
+    }
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: function (){
+      return import('../views/Register.vue');
+    }
   },
   {
     path: '/about',
@@ -18,7 +31,9 @@ const routes = [
   {
     path: '/tasks',
     name: 'tasks',
-    component: () => import('@/views/Tasks.vue')
+    component: function (){
+      return import('../views/Tasks.vue');
+    }
   }
 ]
 

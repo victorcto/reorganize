@@ -10,6 +10,8 @@ services:
     ports:
       - 8080:8080
     command: [ "npm", "run", "serve" ]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   postgreSQL:
     image: postgres:12.2
     container_name: reorganize_postgres
@@ -18,4 +20,4 @@ services:
     volumes:
       - ./data:/var/lib/postgresql/data
     ports:
-      - 5432:5432 #sudo docker exec reorganize_postgres psql -c "CREATE DATABASE tasks" -U postgres
+      - 5432:5432 #sudo docker exec reorganize_postgres psql -c "CREATE DATABASE reorganize" -U postgres
