@@ -45,6 +45,7 @@ public class TaskService {
 		
 		if (task.isPresent()) {
 			BeanUtils.copyProperties(task.get(), taskDTO);
+			taskDTO.setUser(task.get().getUser().getId());
 			return Optional.of(taskDTO);
 		}
 		

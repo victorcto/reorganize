@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.reorganize.task.entities.enums.Priority;
 import br.com.reorganize.task.entities.enums.Status;
 
@@ -44,6 +46,7 @@ public class Task implements Serializable {
 	@Column(name = "prioridade", nullable = false)
 	private Integer priority;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "usuario", nullable = false)
 	private User user;
